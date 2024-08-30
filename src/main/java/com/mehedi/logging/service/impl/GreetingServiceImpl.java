@@ -22,4 +22,17 @@ public class GreetingServiceImpl implements GreetingService {
         logger.debug("Greeting result: {}", result);
         return result;
     }
+
+    @Override
+    public String getFarewell(String name) {
+        logger.debug("Entered getFarewell method with parameter name: {}", name);
+        if ("error".equalsIgnoreCase(name)) {
+            logger.error("Simulated error scenario encountered");
+            throw new RuntimeException("Simulated exception");
+        }
+        logger.debug("Processing request in getFarewell");
+        String result = "Goodbye, " + name + "!";
+        logger.debug("Farewell result: {}", result);
+        return result;
+    }
 }

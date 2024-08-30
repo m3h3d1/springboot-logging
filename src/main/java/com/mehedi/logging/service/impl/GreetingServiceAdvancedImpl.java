@@ -22,4 +22,17 @@ public class GreetingServiceAdvancedImpl implements GreetingService {
         logger.debug("AdvancedGreetingService: Greeting result: {}", result);
         return result;
     }
+
+    @Override
+    public String getFarewell(String name) {
+        logger.debug("AdvancedGreetingService: Entered getFarewell method with parameter name: {}", name);
+        if ("error".equalsIgnoreCase(name)) {
+            logger.error("AdvancedGreetingService: Simulated error scenario encountered");
+            throw new RuntimeException("AdvancedGreetingService: Simulated exception");
+        }
+        logger.debug("AdvancedGreetingService: Performing advanced processing in getFarewell");
+        String result = "Farewell, honored " + name + "!";
+        logger.debug("AdvancedGreetingService: Farewell result: {}", result);
+        return result;
+    }
 }

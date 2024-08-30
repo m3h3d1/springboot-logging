@@ -34,4 +34,17 @@ public class GreetingController {
         }
     }
 
+    @GetMapping("/farewell")
+    public String farewell(@RequestParam(value = "name", defaultValue = "World") String name) {
+        MDC.put("apiEndpoint", "/farewell");
+        logger.info("Received request to /farewell with name: {}", name);
+        try {
+            String response = greetingService.getFarewell(name);
+            logger.info("Returning response: {}", response);
+            return response;
+        } catch (Exception e) {
+            logger.error("Exception occurred while processing request", e);
+            return "An error occurred";
+        }
+    }
 }

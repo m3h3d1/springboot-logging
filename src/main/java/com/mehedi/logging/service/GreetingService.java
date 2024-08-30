@@ -6,4 +6,5 @@ import org.springframework.stereotype.Service;
 
 public interface GreetingService {
     String getGreeting(String name);
+    String getFarewell(String name);
 }
