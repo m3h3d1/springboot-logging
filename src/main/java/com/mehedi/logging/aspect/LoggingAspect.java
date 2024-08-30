@@ -31,10 +31,13 @@ public class LoggingAspect {
 
     @Around("execution(* com.mehedi.logging.service..*(..))")
     public Object logAroundService(ProceedingJoinPoint joinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
         logger.info("Entering service method: {}", joinPoint.getSignature().toShortString());
         try {
             Object result = joinPoint.proceed();
-            logger.info("Exiting service method: {}; Return value: {}", joinPoint.getSignature().toShortString(), result);
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            logger.info("Exiting service method: {}; Return value: {}; Execution time: {} ms",
+                    joinPoint.getSignature().toShortString(), result, elapsedTime);
             return result;
         } catch (Exception e) {
             logger.error("Exception in service method: {}", joinPoint.getSignature().toShortString(), e);
