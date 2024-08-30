@@ -9,11 +9,15 @@ public class GreetingService {
 
     private static final Logger logger = LoggerFactory.getLogger(GreetingService.class);
 
-    public String getGreeting() {
-        logger.info("Getting greeting in GreetingService");
-        // Simulate some processing logic
-        String result = "Hello, World!";
-        logger.info("Greeting result: {}", result);
+    public String getGreeting(String name) {
+        logger.debug("Entered getGreeting method with parameter name: {}", name);
+        if ("error".equalsIgnoreCase(name)) {
+            logger.error("Simulated error scenario encountered");
+            throw new RuntimeException("Simulated exception");
+        }
+        logger.debug("Processing request in getGreeting");
+        String result = "Hello, " + name + "!";
+        logger.debug("Greeting result: {}", result);
         return result;
     }
 }

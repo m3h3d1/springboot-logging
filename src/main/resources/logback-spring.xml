@@ -8,7 +8,6 @@
         </encoder>
     </appender>
 
-
     <!-- File appender -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/spring-boot-application.log</file>
@@ -27,5 +26,9 @@
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </root>
+
+    <!-- Logger for Controller and Service -->
+    <logger name="com.mehedi.logging.controller" level="debug"/>
+    <logger name="com.mehedi.logging.service" level="debug"/>
 
 </configuration>
