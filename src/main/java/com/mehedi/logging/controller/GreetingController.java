@@ -16,7 +16,7 @@ public class GreetingController {
     private static final Logger logger = LoggerFactory.getLogger(GreetingController.class);
 
     @Autowired
-    @Qualifier("basicGreetingService")
+    @Qualifier("advancedGreetingService")
     private GreetingService greetingService;
 
     @GetMapping("hello/greet")

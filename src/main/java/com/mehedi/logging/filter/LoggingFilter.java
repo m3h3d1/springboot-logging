@@ -25,7 +25,7 @@ public class LoggingFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
-            String requestURI = httpRequest.getRequestURI();
+            String requestURI = httpRequest.getRequestURI().replaceAll("[/{}]", "_").replaceAll("[^a-zA-Z0-9_]", "");
             String method = httpRequest.getMethod();
 
             MDC.put("apiEndpoint", requestURI);
