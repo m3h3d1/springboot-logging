@@ -19,9 +19,8 @@ public class GreetingController {
     @Qualifier("basicGreetingService")
     private GreetingService greetingService;
 
-    @GetMapping("/greet")
+    @GetMapping("hello/greet")
     public String greet(@RequestParam(value = "name", defaultValue = "World") String name) {
-        MDC.put("apiEndpoint", "/greet");
         logger.info("Received request to /greet with name: {}", name);
         logger.debug("Delegating request to GreetingService");
         try {
@@ -34,9 +33,8 @@ public class GreetingController {
         }
     }
 
-    @GetMapping("/farewell")
+    @GetMapping("hello/farewell")
     public String farewell(@RequestParam(value = "name", defaultValue = "World") String name) {
-        MDC.put("apiEndpoint", "/farewell");
         logger.info("Received request to /farewell with name: {}", name);
         try {
             String response = greetingService.getFarewell(name);
