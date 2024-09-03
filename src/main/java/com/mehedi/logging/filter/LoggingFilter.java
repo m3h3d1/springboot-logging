@@ -31,11 +31,8 @@ public class LoggingFilter implements Filter {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             String requestURI = httpRequest.getRequestURI();
-//            String apiFileName = httpRequest.getRequestURI().replaceAll("[/{}]", "_").replaceAll("[^a-zA-Z0-9_]", "");
 
-            // Fetch the log file name from logging.properties, fall back to 'common' if not found
-            String apiLogFileName = env.getProperty("api.logging." + requestURI, "common");
-
+            String apiLogFileName = determineLogFileName(requestURI);
             MDC.put("apiLogFileName", apiLogFileName);
             MDC.put("apiEndpoint", requestURI);
 
@@ -50,6 +47,31 @@ public class LoggingFilter implements Filter {
         } else {
             chain.doFilter(request, response);
         }
+    }
+
+    private String determineLogFileName(String requestURI) {
+        // Check for a specific mapping first
+        String apiLogFileName = env.getProperty("api.logging." + requestURI);
+        if (apiLogFileName != null) {
+            return apiLogFileName;
+        }
+
+        // Check for wildcard mappings
+        String[] uriSegments = requestURI.split("/");
+        StringBuilder uriPattern = new StringBuilder();
+        for (String segment : uriSegments) {
+            if (!segment.isEmpty()) {
+                uriPattern.append("/").append(segment).append("/*");
+                String wildcardKey = "api.logging." + uriPattern.toString();
+                apiLogFileName = env.getProperty(wildcardKey);
+                if (apiLogFileName != null) {
+                    return apiLogFileName;
+                }
+            }
+        }
+
+        // Fallback to the default
+        return env.getProperty("logging.default-log-file-name", "common");
     }
 
     @Override
