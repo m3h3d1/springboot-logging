@@ -35,8 +35,4 @@
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="SIFT" />
     </root>
-
-    <!-- Logger for Controller and Service -->
-    <logger name="com.mehedi.logging.controller" level="${logging.controller-log-level}"/>
-    <logger name="com.mehedi.logging.service" level="${logging.service-log-level}"/>
 </configuration>

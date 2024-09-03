@@ -1,5 +1,7 @@
 package com.mehedi.logging.filter;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -56,6 +58,7 @@ public class LoggingFilter implements Filter {
         // Check for a specific mapping first
         String apiLogFileName = env.getProperty("api.logging." + requestURI);
         if (apiLogFileName != null) {
+            settingLogLevel(requestURI);
             return apiLogFileName;
         }
 
@@ -68,6 +71,7 @@ public class LoggingFilter implements Filter {
                 String wildcardKey = "api.logging." + uriPattern.toString();
                 apiLogFileName = env.getProperty(wildcardKey);
                 if (apiLogFileName != null) {
+                    settingLogLevel(uriPattern.toString());
                     return apiLogFileName;
                 }
             }
@@ -75,6 +79,13 @@ public class LoggingFilter implements Filter {
 
         // Fallback to the default
         return env.getProperty("logging.default-log-file-name", "common");
+    }
+
+    private void settingLogLevel(String requestURI) {
+        String logLevelKey = "api.logging.level." + requestURI;
+        Level logLevel = Level.valueOf(env.getProperty(logLevelKey, "info"));
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        loggerContext.getLogger(Logger.ROOT_LOGGER_NAME).setLevel(logLevel);
     }
 
     @Override
