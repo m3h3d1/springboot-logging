@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <!-- Default property values -->
+    <property name="DEFAULT_LOG_FILE_NAME" value="common"/>
+    <property name="ROOT_LOG_LEVEL" value="info"/>
+    <property name="CONTROLLER_LOG_LEVEL" value="debug"/>
+    <property name="SERVICE_LOG_LEVEL" value="debug"/>
+    <property name="LOG_MAX_HISTORY" value="30"/>
 
     <!-- Console appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] [%-5level] [%X{apiEndpoint}] [%X{httpMethod}] [%logger{36}] - %msg%n</pattern>-->
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%X{apiEndpoint}] [%logger{36}] - %msg%n</pattern>
         </encoder>
     </appender>
@@ -12,15 +18,15 @@
     <!-- Sifting appender -->
     <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
         <discriminator>
-            <key>apiFileName</key>
-            <defaultValue>default</defaultValue>
+            <key>apiLogFileName</key>
+            <defaultValue>${DEFAULT_LOG_FILE_NAME}</defaultValue>
         </discriminator>
         <sift>
-            <appender name="FILE-${apiFileName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>logs/${apiFileName}.log</file>
+            <appender name="FILE-${apiLogFileName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>logs/${apiLogFileName}.log</file>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <fileNamePattern>logs/${apiFileName}.%d{yyyy-MM-dd}.log</fileNamePattern>
-                    <maxHistory>30</maxHistory>
+                    <fileNamePattern>logs/${apiLogFileName}.%d{yyyy-MM-dd}.log</fileNamePattern>
+                    <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
                 </rollingPolicy>
                 <encoder>
                     <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%X{apiEndpoint}] [%logger{36}] - %msg%n</pattern>
@@ -30,13 +36,12 @@
     </appender>
 
     <!-- Root logger -->
-    <root level="info">
+    <root level="${ROOT_LOG_LEVEL}">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="SIFT" />
     </root>
 
     <!-- Logger for Controller and Service -->
-    <logger name="com.mehedi.logging.controller" level="debug"/>
-    <logger name="com.mehedi.logging.service" level="debug"/>
-
+    <logger name="com.mehedi.logging.controller" level="${CONTROLLER_LOG_LEVEL}"/>
+    <logger name="com.mehedi.logging.service" level="${SERVICE_LOG_LEVEL}"/>
 </configuration>
