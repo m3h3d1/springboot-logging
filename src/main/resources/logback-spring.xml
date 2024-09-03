@@ -12,14 +12,14 @@
     <!-- Sifting appender -->
     <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
         <discriminator>
-            <key>apiEndpoint</key>
+            <key>apiFileName</key>
             <defaultValue>default</defaultValue>
         </discriminator>
         <sift>
-            <appender name="FILE-${apiEndpoint}" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>logs/${apiEndpoint}.log</file>
+            <appender name="FILE-${apiFileName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>logs/${apiFileName}.log</file>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <fileNamePattern>logs/${apiEndpoint}.%d{yyyy-MM-dd}.log</fileNamePattern>
+                    <fileNamePattern>logs/${apiFileName}.%d{yyyy-MM-dd}.log</fileNamePattern>
                     <maxHistory>30</maxHistory>
                 </rollingPolicy>
                 <encoder>

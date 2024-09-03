@@ -25,11 +25,15 @@ public class LoggingFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
-            String requestURI = httpRequest.getRequestURI().replaceAll("[/{}]", "_").replaceAll("[^a-zA-Z0-9_]", "");
+            String requestURI = httpRequest.getRequestURI();
             String method = httpRequest.getMethod();
+
+            String apiFileName = httpRequest.getRequestURI();
+            apiFileName = apiFileName.replaceAll("[/{}]", "_").replaceAll("[^a-zA-Z0-9_]", "");
 
             MDC.put("apiEndpoint", requestURI);
             MDC.put("httpMethod", method);
+            MDC.put("apiFileName", apiFileName);
 
             logger.info("Starting API call. HTTP Method: {}, URI: {}", method, requestURI);
 
