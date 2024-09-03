@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +15,6 @@ import java.util.UUID;
 
 @Component
 @PropertySource("classpath:logging.properties")
-//@Order(1)  // Order in which the filter will be executed; lower value indicates higher precedence
 public class LoggingFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);

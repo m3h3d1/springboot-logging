@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
 
-    <!-- Default property values -->
-    <property name="DEFAULT_LOG_FILE_NAME" value="common"/>
-    <property name="ROOT_LOG_LEVEL" value="info"/>
-    <property name="CONTROLLER_LOG_LEVEL" value="debug"/>
-    <property name="SERVICE_LOG_LEVEL" value="debug"/>
-    <property name="ATON_LOG_LEVEL" value="debug"/>
-    <property name="LOG_MAX_HISTORY" value="30"/>
+    <property resource="logging.properties" />
 
     <!-- Console appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
