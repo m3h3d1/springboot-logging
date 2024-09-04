@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="30 seconds">
+<configuration scan="true" scanPeriod="30 seconds" debug="true">
 
     <property resource="logging.properties" />
 
     <!-- Console appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%X{uniqueId}] [%X{apiEndpoint}] [%logger{36}] - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%highlight(%-5level)] [%X{uniqueId}] [%X{apiEndpoint}] [%class{0}:%line] - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -18,13 +18,15 @@
         </discriminator>
         <sift>
             <appender name="FILE-${apiLogFileName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>logs/${apiLogFileName}.log</file>
-                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <fileNamePattern>logs/${apiLogFileName}.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <file>${logging.location}/${apiLogFileName}.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                    <fileNamePattern>${logging.location}/archived/${apiLogFileName}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+                    <maxFileSize>10MB</maxFileSize>
                     <maxHistory>${logging.max-history}</maxHistory>
+                    <totalSizeCap>10GB</totalSizeCap>
                 </rollingPolicy>
                 <encoder>
-                    <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%X{uniqueId}] [%X{apiEndpoint}] [%logger{36}] - %msg%n</pattern>
+                    <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%X{uniqueId}] [%X{apiEndpoint}] [%class{0}:%line] - %msg%n</pattern>
                 </encoder>
             </appender>
         </sift>

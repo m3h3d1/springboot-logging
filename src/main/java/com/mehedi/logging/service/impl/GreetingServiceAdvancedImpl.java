@@ -25,9 +25,9 @@ public class GreetingServiceAdvancedImpl implements GreetingService {
             }
             Thread.sleep(1000);
 
-            logger.debug("AdvancedGreetingService: Performing advanced processing in getGreeting");
+            logger.warn("AdvancedGreetingService: Performing advanced processing in getGreeting");
             String result = "Hello, new " + name + "!";
-            logger.debug("AdvancedGreetingService: Greeting result: {}", result);
+            logger.error("AdvancedGreetingService: Greeting result: {}", result);
             return result;
         } catch (InterruptedException e) {
             logger.error("AdvancedGreetingService: Thread was interrupted during simulated processing", e);
