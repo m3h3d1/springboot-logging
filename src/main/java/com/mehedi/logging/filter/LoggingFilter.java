@@ -7,25 +7,36 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.UUID;
 
 @Component
-@PropertySource("classpath:logging.properties")
 public class LoggingFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
+    private Properties properties;
 
-    @Autowired
-    private Environment env;
+    public LoggingFilter() {
+        properties = loadProperties();
+    }
 
     @Override
     public void init(FilterConfig filterConfig) { }
+
+    private Properties loadProperties() {
+        Properties props = new Properties();
+        try {
+            ClassPathResource resource = new ClassPathResource("logging.properties");
+            props.load(resource.getInputStream());
+        } catch (IOException e) {
+            logger.error("Error loading properties file", e);
+        }
+        return props;
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -56,7 +67,7 @@ public class LoggingFilter implements Filter {
 
     private String determineLogFileName(String requestURI) {
         // Check for a specific mapping first
-        String apiLogFileName = env.getProperty("api.logging." + requestURI);
+        String apiLogFileName = properties.getProperty("api.logging." + requestURI);
         if (apiLogFileName != null) {
             settingLogLevel(requestURI);
             return apiLogFileName;
@@ -69,7 +80,7 @@ public class LoggingFilter implements Filter {
             if (!segment.isEmpty()) {
                 uriPattern.append("/").append(segment).append("/*");
                 String wildcardKey = "api.logging." + uriPattern.toString();
-                apiLogFileName = env.getProperty(wildcardKey);
+                apiLogFileName = properties.getProperty(wildcardKey);
                 if (apiLogFileName != null) {
                     settingLogLevel(uriPattern.toString());
                     return apiLogFileName;
@@ -78,12 +89,12 @@ public class LoggingFilter implements Filter {
         }
 
         // Fallback to the default
-        return env.getProperty("logging.default-log-file-name", "common");
+        return properties.getProperty("logging.default-log-file-name", "common");
     }
 
     private void settingLogLevel(String requestURI) {
         String logLevelKey = "api.logging.level." + requestURI;
-        Level logLevel = Level.valueOf(env.getProperty(logLevelKey, "info"));
+        Level logLevel = Level.valueOf(properties.getProperty(logLevelKey, "info"));
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         loggerContext.getLogger(Logger.ROOT_LOGGER_NAME).setLevel(logLevel);
     }
