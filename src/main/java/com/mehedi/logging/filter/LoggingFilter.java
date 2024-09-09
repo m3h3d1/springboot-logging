@@ -1,12 +1,13 @@
 package com.mehedi.logging.filter;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Component
 public class LoggingFilter implements Filter {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
+    private static final Logger logger = LogManager.getLogger(LoggingFilter.class);
     private Properties properties;
 
     public LoggingFilter() {
@@ -46,9 +47,9 @@ public class LoggingFilter implements Filter {
             String uniqueId = UUID.randomUUID().toString();
 
             String apiLogFileName = determineLogFileName(requestURI);
-            MDC.put("apiLogFileName", apiLogFileName);
-            MDC.put("apiEndpoint", requestURI);
-            MDC.put("uniqueId", uniqueId);
+            ThreadContext.put("apiLogFileName", apiLogFileName);
+            ThreadContext.put("apiEndpoint", requestURI);
+            ThreadContext.put("uniqueId", uniqueId);
 
             logger.info("Starting API call. HTTP Method: {}, URI: {}, Unique ID: {}",
                         httpRequest.getMethod(), requestURI, uniqueId);
@@ -58,7 +59,7 @@ public class LoggingFilter implements Filter {
             } finally {
                 logger.info("Completed API call. HTTP Method: {}, URI: {}, Unique ID: {}",
                             httpRequest.getMethod(), requestURI, uniqueId);
-                MDC.clear();  // Clear the MDC after the request is processed
+                ThreadContext.clearMap();  // Clear the ThreadContext after the request is processed
             }
         } else {
             chain.doFilter(request, response);
@@ -95,8 +96,11 @@ public class LoggingFilter implements Filter {
     private void settingLogLevel(String requestURI) {
         String logLevelKey = "api.logging.level." + requestURI;
         Level logLevel = Level.valueOf(properties.getProperty(logLevelKey, "info"));
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        loggerContext.getLogger(Logger.ROOT_LOGGER_NAME).setLevel(logLevel);
+
+        LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
+        Logger rootLogger = loggerContext.getRootLogger();  // Get the root logger
+
+        Configurator.setLevel(rootLogger, logLevel);
     }
 
     @Override

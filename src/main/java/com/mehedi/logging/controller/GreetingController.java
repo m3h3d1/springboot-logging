@@ -1,8 +1,8 @@
 package com.mehedi.logging.controller;
 
 import com.mehedi.logging.service.GreetingService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GreetingController {
 
-    private static final Logger logger = LoggerFactory.getLogger(GreetingController.class);
+    private static final Logger logger = LogManager.getLogger(GreetingController.class);
 
     @Autowired
     @Qualifier("advancedGreetingService")
@@ -37,6 +37,20 @@ public class GreetingController {
         logger.info("Received request to /farewell with name: {}", name);
         try {
             String response = greetingService.getFarewell(name);
+            logger.info("Returning response: {}", response);
+            return response;
+        } catch (Exception e) {
+            logger.error("Exception occurred while processing request", e);
+            return "An error occurred";
+        }
+    }
+
+    @GetMapping("hellow/greet")
+    public String greetw(@RequestParam(value = "name", defaultValue = "World") String name) {
+        logger.info("Received request to /greet with name: {}", name);
+        logger.debug("Delegating request to GreetingService");
+        try {
+            String response = greetingService.getGreeting(name);
             logger.info("Returning response: {}", response);
             return response;
         } catch (Exception e) {
