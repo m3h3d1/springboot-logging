@@ -12,20 +12,6 @@
         <!-- Routing Appender for dynamic file naming based on ThreadContext -->
         <Routing name="RoutingAppender">
             <Routes pattern="$${ctx:apiLogFileName}">
-                <!-- Provide a default route in case ctx:apiLogFileName is not set -->
-                <Route key="common">
-                    <RollingFile name="Rolling-common"
-                                 fileName="logs2/common.log"
-                                 filePattern="logs2/archived/common-%d{yyyy-MM-dd}-%i.log.gz">
-                        <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%level] [%X{uniqueId}] [%X{apiEndpoint}] [%class{1}.%M:%L] - %msg%n"/>
-                        <Policies>
-                            <SizeBasedTriggeringPolicy size="10 MB"/>
-                            <TimeBasedTriggeringPolicy interval="1"/>
-                        </Policies>
-                        <DefaultRolloverStrategy max="${bundle:logging:max-history}"/>
-                    </RollingFile>
-                </Route>
-
                 <!-- Dynamic route based on ctx:apiLogFileName -->
                 <Route>
                     <RollingFile name="Rolling-${ctx:apiLogFileName}"
@@ -34,7 +20,7 @@
                                  createOnDemand="true">
                         <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%level] [%X{uniqueId}] [%X{apiEndpoint}] [%class{1}.%M:%L] - %msg%n"/>
                         <Policies>
-                            <SizeBasedTriggeringPolicy size="10 MB"/>
+                            <SizeBasedTriggeringPolicy size="${bundle:logging:max-file-size}"/>
                             <TimeBasedTriggeringPolicy interval="1"/>
                         </Policies>
                         <DefaultRolloverStrategy max="${bundle:logging:max-history}"/>

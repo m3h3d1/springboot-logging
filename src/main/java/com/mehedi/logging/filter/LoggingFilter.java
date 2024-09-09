@@ -70,7 +70,7 @@ public class LoggingFilter implements Filter {
         // Check for a specific mapping first
         String apiLogFileName = properties.getProperty("api.logging." + requestURI);
         if (apiLogFileName != null) {
-            settingLogLevel(requestURI);
+            settingLogLevel(requestURI, false);
             return apiLogFileName;
         }
 
@@ -83,19 +83,25 @@ public class LoggingFilter implements Filter {
                 String wildcardKey = "api.logging." + uriPattern.toString();
                 apiLogFileName = properties.getProperty(wildcardKey);
                 if (apiLogFileName != null) {
-                    settingLogLevel(uriPattern.toString());
+                    settingLogLevel(uriPattern.toString(), false);
                     return apiLogFileName;
                 }
             }
         }
 
         // Fallback to the default
+        settingLogLevel(requestURI, true);
         return properties.getProperty("logging.default-log-file-name", "common");
     }
 
-    private void settingLogLevel(String requestURI) {
-        String logLevelKey = "api.logging.level." + requestURI;
-        Level logLevel = Level.valueOf(properties.getProperty(logLevelKey, "info"));
+    private void settingLogLevel(String requestURI, boolean commonLogLevel) {
+        Level logLevel;
+        if(commonLogLevel) {
+            logLevel = Level.valueOf(properties.getProperty("common-log-level", "info"));
+        } else {
+            String logLevelKey = "api.logging.level." + requestURI;
+            logLevel = Level.valueOf(properties.getProperty(logLevelKey, "info"));
+        }
 
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
         Logger rootLogger = loggerContext.getRootLogger();  // Get the root logger
