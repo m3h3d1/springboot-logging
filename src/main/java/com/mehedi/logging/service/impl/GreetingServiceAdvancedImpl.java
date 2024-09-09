@@ -12,6 +12,11 @@ public class GreetingServiceAdvancedImpl implements GreetingService {
 
     @Override
     public String getGreeting(String name) {
+        logger.debug("Debug Message");
+		logger.warn("Warn Message");
+		logger.error("Error Message");
+		logger.info("Info Message");
+		logger.trace("Trace Message");
         logger.debug("AdvancedGreetingService: Entered getGreeting method with parameter name: {}", name);
         if ("error".equalsIgnoreCase(name)) {
             logger.error("AdvancedGreetingService: Simulated error scenario encountered");
@@ -38,6 +43,11 @@ public class GreetingServiceAdvancedImpl implements GreetingService {
 
     @Override
     public String getFarewell(String name) {
+        logger.debug("Debug Message");
+		logger.warn("Warn Message");
+		logger.error("Error Message");
+		logger.info("Info Message");
+		logger.trace("Trace Message");
         logger.debug("AdvancedGreetingService: Entered getFarewell method with parameter name: {}", name);
         if ("error".equalsIgnoreCase(name)) {
             logger.error("AdvancedGreetingService: Simulated error scenario encountered");

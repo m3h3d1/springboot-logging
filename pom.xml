@@ -11,6 +11,7 @@
     <groupId>com.mehedi</groupId>
     <artifactId>springboot-logging</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
     <name>logging</name>
     <description>logging</description>
     <url/>

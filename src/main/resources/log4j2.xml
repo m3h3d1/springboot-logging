@@ -6,22 +6,33 @@
 
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%highlight{%level}] [%X{uniqueId}] [%X{apiEndpoint}] [%class{1}.%M:%L] - %msg%n}"/>
+            <PatternLayout pattern="${bundle:logging:console-pattern}"/>
         </Console>
 
         <!-- Routing Appender for dynamic file naming based on ThreadContext -->
         <Routing name="RoutingAppender">
             <Routes pattern="$${ctx:apiLogFileName}">
-                <!-- Dynamic route based on ctx:apiLogFileName -->
-                <Route>
-                    <RollingFile name="Rolling-${ctx:apiLogFileName}"
-                                 fileName="logs2/${ctx:apiLogFileName}.log"
-                                 filePattern="logs2/archived/${ctx:apiLogFileName}-%d{yyyy-MM-dd}-%i.log.gz"
-                                 createOnDemand="true">
-                        <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%level] [%X{uniqueId}] [%X{apiEndpoint}] [%class{1}.%M:%L] - %msg%n"/>
+                <!-- If ThreadContext has no value for key apiLogFileName -->
+                <Route key="$${ctx:apiLogFileName}">
+                    <RollingFile name="Rolling-default" fileName="${bundle:logging:logs-location}/system.log"
+                                 filePattern="${bundle:logging:logs-location}/archived/system-%d{yyyy-MM-dd}-%i.log.gz">
+                        <PatternLayout pattern="${bundle:logging:routing-pattern}"/>
                         <Policies>
                             <SizeBasedTriggeringPolicy size="${bundle:logging:max-file-size}"/>
-                            <TimeBasedTriggeringPolicy interval="1"/>
+                            <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                        </Policies>
+                    </RollingFile>
+                </Route>
+                <!-- If ThreadContext has a value for apiLogFileName -->
+                <Route>
+                    <RollingFile name="Rolling-${ctx:apiLogFileName}"
+                                 fileName="${bundle:logging:logs-location}/${ctx:apiLogFileName}.log"
+                                 filePattern="${bundle:logging:logs-location}/archived/${ctx:apiLogFileName}-%d{yyyy-MM-dd}-%i.log.gz"
+                                 createOnDemand="true">
+                        <PatternLayout pattern="${bundle:logging:routing-pattern}"/>
+                        <Policies>
+                            <SizeBasedTriggeringPolicy size="${bundle:logging:max-file-size}"/>
+                            <TimeBasedTriggeringPolicy interval="1" modulate="true" />
                         </Policies>
                         <DefaultRolloverStrategy max="${bundle:logging:max-history}"/>
                     </RollingFile>
@@ -31,7 +42,6 @@
     </Appenders>
 
     <Loggers>
-<!--        <Root level="${bundle:logging:logging.root-log-level}">-->
         <Root level="${bundle:logging:root-log-level}">
             <AppenderRef ref="CONSOLE"/>
             <AppenderRef ref="RoutingAppender"/>
